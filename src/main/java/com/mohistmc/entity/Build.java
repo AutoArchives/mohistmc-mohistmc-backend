@@ -68,6 +68,6 @@ public class Build {
     private transient GHArtifact ghArtifact;
 
     public String getFileName() {
-        return MessageFormat.format("{0}-{1}-{2}.jar", projectVersion.getProject().getName(), projectVersion.getVersionName(), gitInfo.getGitSha().substring(0, 7));
+        return MessageFormat.format("{0}-{1}-{2}-server.jar", projectVersion.getProject().getName(), projectVersion.getVersionName(), gitInfo.getGitSha().substring(0, 8));
     }
 }
