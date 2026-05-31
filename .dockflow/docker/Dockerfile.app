@@ -1,4 +1,3 @@
-# Build with Gradle
 FROM eclipse-temurin:23-jdk AS builder
 
 WORKDIR /app
@@ -9,7 +8,6 @@ RUN chmod +x gradlew
 RUN ./gradlew dependencies --no-daemon
 RUN ./gradlew bootJar --no-daemon
 
-# Build docker image
 FROM eclipse-temurin:23-jdk
 
 WORKDIR /app

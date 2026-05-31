@@ -1,0 +1,17 @@
+[Unit]
+Description=Rclone Mount Mohist Archives
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/rclone mount ovhs3:mohistmc-archives /mnt/mohist-archives \
+    --allow-other \
+    --vfs-cache-mode writes \
+    --read-only
+ExecStop=/bin/fusermount -u /mnt/mohist-archives
+Restart=always
+RestartSec=10
+User=root
+
+[Install]
+WantedBy=multi-user.target

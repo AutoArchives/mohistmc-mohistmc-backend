@@ -1,0 +1,24 @@
+project_name: mohistmc-backend
+
+hooks:
+  fatal: true
+
+health_checks:
+  on_failure: rollback
+  startup_delay: 15
+  endpoints:
+    - name: Main Application
+      remote: true
+      url: "http://localhost:{{ current.env.app_external_port }}/health"
+      expected_status: 200
+      timeout: 30
+      retries: 3
+      retry_delay: 5
+
+uploads:
+  - src: .dockflow/services/rclone-s3-mohistmc.service
+    dest: /etc/systemd/system/rclone-s3-mohistmc.service
+    permissions: "644"
+  - src: .dockflow/services/var-mohistmc.mount
+    dest: /etc/systemd/system/var-mohistmc.mount
+    permissions: "644"

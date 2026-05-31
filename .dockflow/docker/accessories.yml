@@ -1,0 +1,22 @@
+services:
+  mohistmc-db:
+    image: postgres:17
+    networks:
+      - mohistmc-shared
+      - default
+    volumes:
+      - mohistmc-postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_DB: "{{ current.env.db_name }}"
+      POSTGRES_USER: "{{ current.env.db_username }}"
+      POSTGRES_PASSWORD: "{{ current.env.db_password }}"
+
+volumes:
+  mohistmc-postgres-data:
+
+networks:
+  mohistmc-shared:
+    external: true
+  default:

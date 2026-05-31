@@ -1,0 +1,9 @@
+servers:
+  main_server:
+    role: manager
+    tags: [production]
+    env:
+      app_external_port: "24001"
+      server_port: "3568"
+      db_name: mohistmc_website
+      db_username: mohistmc

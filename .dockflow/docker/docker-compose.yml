@@ -1,0 +1,26 @@
+services:
+  app:
+    image: mohistmc-backend
+    build:
+      context: ../..
+      dockerfile: Dockerfile.app
+    environment:
+      DB_HOST: mohistmc-db
+      DB_NAME: "{{ current.env.db_name }}"
+      DB_USERNAME: "{{ current.env.db_username }}"
+      DB_PASSWORD: "{{ current.env.db_password }}"
+      GITHUB_TOKEN: "{{ current.env.github_token }}"
+      GITHUB_USERNAME: "{{ current.env.github_username }}"
+      SERVER_PORT: "{{ current.env.server_port }}"
+    ports:
+      - "{{ current.env.app_external_port }}:3568"
+    volumes:
+      - /var/mohistmc:/var/mohistmc
+    networks:
+      - mohistmc-shared
+      - default
+
+networks:
+  mohistmc-shared:
+    external: true
+  default:
