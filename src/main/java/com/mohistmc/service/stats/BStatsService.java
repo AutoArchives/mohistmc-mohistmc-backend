@@ -11,9 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.util.List;
 
 @Slf4j
@@ -26,14 +28,22 @@ public class BStatsService {
 
     private final BStatsProperties bStatsProperties;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = restTemplateWithTimeouts();
     private BStatsResponse bStats = new BStatsResponse(new BStatsDto(0, 0), new BStatsDto(0, 0));
 
-    public void synchronize() {
-        bStats = getBStats();
+    private static RestTemplate restTemplateWithTimeouts() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(Duration.ofSeconds(10));
+        factory.setReadTimeout(Duration.ofSeconds(30));
+        return new RestTemplate(factory);
     }
 
-    public BStatsResponse getBStats() {
+    public void synchronize() {
+        bStats = fetchBStats();
+    }
+
+    // Must stay off the request path: callers read the cached bStats snapshot via getBStats().
+    private BStatsResponse fetchBStats() {
         List<Integer> servers = bStatsProperties.getServers();
 
         int maxServers = servers.stream().mapToInt(id -> getFilteredBStats(id, BStatsTypeEnum.SERVERS, BSTATS_MAX_ELEMENTS)).sum();
@@ -67,7 +77,7 @@ public class BStatsService {
                             .max()
                             .orElse(0);
         } catch (Exception e) {
-            System.err.println("Error fetching bStats data: " + e.getMessage());
+            log.error("Error fetching bStats data for plugin {} ({}): {}", pluginId, bstatsType, e.getMessage());
             return 0;
         }
     }

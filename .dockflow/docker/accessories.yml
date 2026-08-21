@@ -1,13 +1,18 @@
 services:
   mohistmc-db:
     image: postgres:17
+    command:
+      - postgres
+      - -c
+      - log_connections=on
+      - -c
+      - log_disconnections=on
     networks:
       - mohistmc-shared
       - default
     volumes:
       - mohistmc-postgres-data:/var/lib/postgresql/data
-    ports:
-      - "5435:5432"
+    # Do not publish a port: Swarm ignores the host IP, so any mapping exposes the database publicly.
     environment:
       POSTGRES_DB: "{{ current.env.db_name }}"
       POSTGRES_USER: "{{ current.env.db_username }}"

@@ -1,8 +1,6 @@
 package com.mohistmc.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,16 +34,4 @@ public class FileUtil {
         return hex.toString();
     }
 
-    public static Resource getFileStream(Path filePath) {
-        try {
-            Resource resource = new UrlResource(filePath.toUri());
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
-            } else {
-                throw new RuntimeException("Could not read the file!");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Error: " + e.getMessage());
-        }
-    }
 }
